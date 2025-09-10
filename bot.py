@@ -39,7 +39,8 @@ def webhook():
 def index():
     return "✅ Бот работает!"
 
-if name == "__main__":
+if __name__ == "__main__":
    
     bot.infinity_polling()
+
 
