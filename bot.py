@@ -31,15 +31,17 @@ def handle_text(message):
 
 @app.route('/' + TOKEN, methods=['POST'])
 def webhook():
-    json_str = request.stream.read().decode("utf-8")
-    update = telebot.types.Update.de_json(json_str)
-    bot.process_new_updates([update])
+    if request.headers.get('content-type') == 'application/json':
+        json_str = request.data.decode("utf-8")
+        update = telebot.types.Update.de_json(json_str)
+        bot.process_new_updates([update])
+        return '', 200
     return "OK", 200
+
 
 @app.route('/')
 def index():
     return "✅ Бот работает!"
-
 
 
 if RENDER_URL:
@@ -47,10 +49,9 @@ if RENDER_URL:
         bot.set_webhook(url=RENDER_URL + '/' + TOKEN)
     except Exception as e:
         print(f"Ошибка при установке вебхука: {e}")
-
-
+        
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
 
 
 
