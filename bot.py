@@ -6,7 +6,7 @@ TOKEN = os.environ.get("TELEGRAM_TOKEN")
 MY_ID = int(os.environ.get("MY_ID"))
 
 bot = telebot.TeleBot(TOKEN)
-app = Flask(__name__)
+app = Flask(__name__)  
 
 
 @bot.message_handler(commands=['start'])
@@ -42,3 +42,4 @@ def index():
 if name == "__main__":
    
     bot.infinity_polling()
+
