@@ -4,6 +4,7 @@ from flask import Flask, request
 
 TOKEN = os.environ.get("TELEGRAM_TOKEN")
 MY_ID = int(os.environ.get("MY_ID"))
+RENDER_URL = os.environ.get("RENDER_URL")
 
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
@@ -39,8 +40,15 @@ def webhook():
 def index():
     return "✅ Бот работает!"
 
+
+
+if RENDER_URL:
+    bot.set_webhook(url=RENDER_URL + '/' + TOKEN)
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+
 
 
 
