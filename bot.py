@@ -43,7 +43,10 @@ def index():
 
 
 if RENDER_URL:
-    bot.set_webhook(url=RENDER_URL + '/' + TOKEN)
+    try:
+        bot.set_webhook(url=RENDER_URL + '/' + TOKEN)
+    except Exception as e:
+        print(f"Ошибка при установке вебхука: {e}")
 
 
 if __name__ == "__main__":
