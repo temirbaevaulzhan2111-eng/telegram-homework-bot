@@ -18,7 +18,10 @@ def webhook():
 
         # --- обработка команды /start ---
         if "text" in message and message["text"] == "/start":
-            send_message(chat_id, "Привет! Мы приняли твое домашнее задание")
+            send_message(
+                chat_id,
+                "Привет! Отправляй свое домашнее задание, обязательно подпиши ФИО и группу"
+            )
 
         # --- если ученик прислал фото ---
         elif "photo" in message:
@@ -31,7 +34,11 @@ def webhook():
 
             final_caption = f"Домашка от {student_name}:\n{caption}"
 
+            # пересылаем фото куратору
             forward_photo_with_caption(ADMIN_ID, file_id, final_caption)
+
+            # подтверждаем ученику
+            send_message(chat_id, "Принято! Отправляем куратору на проверку")
 
     return "ok", 200
 
@@ -53,6 +60,7 @@ def forward_photo_with_caption(chat_id, file_id, caption=""):
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
+
 
 
 
