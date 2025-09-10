@@ -1,34 +1,32 @@
 import os
-import logging
-from telegram import Update
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+import telebot
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-logger = logging.getLogger(__name__)
 
-TOKEN = os.getenv("BOT_TOKEN")
-ADMIN_ID = int(os.getenv("ADMIN_ID", "0"))
+TOKEN = os.environ.get("TELEGRAM_TOKEN")
+MY_ID = int(os.environ.get("MY_ID"))
 
-if not TOKEN or not ADMIN_ID:
-    logger.error("Не заданы переменные окружения BOT_TOKEN и/или ADMIN_ID")
-    raise SystemExit("Задайте BOT_TOKEN и ADMIN_ID как env vars")
+bot = telebot.TeleBot(TOKEN)
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Привет! 👋 Отправь сюда своё домашнее задание, и я передам его куратору.")
 
-async def forward_homework(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        await update.message.forward(chat_id=ADMIN_ID)
-        await update.message.reply_text("✅ Домашнее задание принято! Ждите проверки.")
-    except Exception as e:
-        logger.error(f"Ошибка пересылки: {e}")
+@bot.message_handler(commands=['start'])
+def send_welcome(message):
+    bot.reply_to(message, "Привет 👋! Отправь сюда своё домашнее задание (текст или фото).")
 
-def main():
-    app = Application.builder().token(TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(MessageHandler(filters.ALL, forward_homework))
-    logger.info("Бот запущен...")
-    app.run_polling()
 
-if __name__ == "__main__":
-    main()
+@bot.message_handler(content_types=['text'])
+def forward_text(message):
+    bot.send_message(MY_ID, f"📩 Новое сообщение от {message.from_user.first_name}:\n\n{message.text}")
+
+
+@bot.message_handler(content_types=['photo'])
+def forward_photo(message):
+  
+    photo_id = message.photo[-1].file_id
+    caption = message.caption if message.caption else "📷 Фото без подписи"
+
+
+    bot.send_photo(MY_ID, photo_id, caption=f"От {message.from_user.first_name}:\n{caption}")
+
+
+print("✅ Бот запущен...")
+bot.infinity_polling()
