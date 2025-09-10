@@ -13,6 +13,7 @@ app = Flask(__name__)
 def start(message):
     bot.send_message(message.chat.id, "Привет! Отправь сюда своё домашнее задание 📚")
 
+
 @bot.message_handler(content_types=['photo'])
 def handle_photo(message):
     caption = message.caption if message.caption else "(без подписи)"
@@ -23,9 +24,9 @@ def handle_photo(message):
 
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
-    if message.text != "/start":  # чтобы не дублировалось
-        bot.send_message(MY_ID, f"✉️ Сообщение от {message.from_user.first_name}: {message.text}")
-        bot.send_message(message.chat.id, "✅ Сообщение отправлено преподавателю!")
+    bot.send_message(MY_ID, f"✉️ Сообщение от {message.from_user.first_name}: {message.text}")
+    bot.send_message(message.chat.id, "✅ Сообщение отправлено преподавателю!")
+
 
 @app.route('/' + TOKEN, methods=['POST'])
 def webhook():
@@ -34,12 +35,13 @@ def webhook():
     bot.process_new_updates([update])
     return "!", 200
 
-@app.route("/")
+@app.route('/')
 def index():
     return "✅ Бот работает!"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+
 
 
 
