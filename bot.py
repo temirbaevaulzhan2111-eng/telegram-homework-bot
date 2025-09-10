@@ -8,12 +8,12 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Получаем переменные окружения
+# Получаем переменные окружения, которые вы задали на Render
 TOKEN = os.environ.get("TELEGRAM_TOKEN")
 MY_ID = os.environ.get("MY_ID")
 RENDER_URL = os.environ.get("RENDER_URL")
 
-# Проверяем, что все переменные заданы
+# Проверяем, что все переменные заданы, иначе завершаем работу
 if not TOKEN or not MY_ID or not RENDER_URL:
     logger.error("ОШИБКА: Не заданы все необходимые переменные окружения. Проверьте TELEGRAM_TOKEN, MY_ID и RENDER_URL.")
     raise SystemExit("Программа остановлена.")
@@ -85,4 +85,5 @@ else:
 # Этот блок кода будет выполнен только при локальном запуске
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
 
